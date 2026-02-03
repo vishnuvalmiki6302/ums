@@ -15,40 +15,17 @@
 
   const app = express();
 
-  /* ---------- Middlewares ---------- */
-
-  // Normalize path: fix double slashes (e.g. //api -> /api) so CORS preflight isn't redirected
-  app.use((req, res, next) => {
-    if (req.url.startsWith("//")) {
-      req.url = req.url.replace(/\/+/g, "/");
-    }
-    next();
-  });
+/* ---------- Middlewares ---------- */
 
   app.use(express.json());
   app.use(cookieParser());
 
-  // CORS: allow frontend origin and credentials (cookies)
-  const allowedOrigins = [
-    "https://ums-client.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-  ];
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        // Allow requests with no origin (e.g. Postman, server-to-server)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        callback(null, false);
-      },
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    })
-  );
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
   /* ---------- Database Connection Middleware ---------- */
 
